@@ -668,7 +668,7 @@ class Udemy:
             if not os.path.exists("Courses/"):
                 os.makedirs("Courses/")
             self.txt_file = open(
-                f"Courses/" + time.strftime("%Y-%m-%d--%H-%M") + ".txt",
+                "Courses/" + time.strftime("%Y-%m-%d--%H-%M") + ".txt",
                 "w",
                 encoding="utf-8",
             )
