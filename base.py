@@ -1,6 +1,5 @@
 import json
 import os
-import random
 import re
 import threading
 import time
@@ -14,6 +13,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 
 from colors import *
+import secrets
 
 VERSION = "v1.8"
 
@@ -544,7 +544,7 @@ class Udemy:
             "accept": "application/json, text/plain, */*",
             "x-requested-with": "XMLHttpRequest",
             "x-forwarded-for": str(
-                ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
+                ".".join(map(str, (secrets.SystemRandom().randint(0, 255) for _ in range(4))))
             ),
             "x-udemy-authorization": "Bearer " + self.cookie_dict["access_token"],
             "content-type": "application/json;charset=UTF-8",
