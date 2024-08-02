@@ -7,3 +7,4 @@ pyopenssl
 browser_cookie3
 colorama
 tqdm
+security==1.3.1
