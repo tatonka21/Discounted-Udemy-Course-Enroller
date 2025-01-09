@@ -97,8 +97,8 @@ class Scraper:
 
             for page in range(1, 4):
                 r = requests.get(
-                    "https://www.discudemy.com/all/" + str(page), headers=head
-                )
+                    "https://www.discudemy.com/all/" + str(page), headers=head, 
+                timeout=60)
                 soup = bs(r.content, "html5lib")
                 small_all = soup.find_all("a", {"class": "card-header"})
                 big_all.extend(small_all)
@@ -107,7 +107,7 @@ class Scraper:
                 self.du_progress = index
                 title = item.string
                 url = item["href"].split("/")[-1]
-                r = requests.get("https://www.discudemy.com/go/" + url, headers=head)
+                r = requests.get("https://www.discudemy.com/go/" + url, headers=head, timeout=60)
                 soup = bs(r.content, "html5lib")
                 self.du_links.append(
                     title + "|:|" + soup.find("a", id="couponLink").string
@@ -124,8 +124,8 @@ class Scraper:
 
             for page in range(1, 3):
                 r = requests.get(
-                    "https://www.udemyfreebies.com/free-udemy-courses/" + str(page)
-                )
+                    "https://www.udemyfreebies.com/free-udemy-courses/" + str(page), 
+                timeout=60)
                 soup = bs(r.content, "html5lib")
                 small_all = soup.find_all("a", {"class": "theme-img"})
                 big_all.extend(small_all)
@@ -135,8 +135,8 @@ class Scraper:
                 self.uf_progress = index
                 title = item.img["alt"]
                 link = requests.get(
-                    "https://www.udemyfreebies.com/out/" + item["href"].split("/")[4]
-                ).url
+                    "https://www.udemyfreebies.com/out/" + item["href"].split("/")[4], 
+                timeout=60).url
                 self.uf_links.append(title + "|:|" + link)
 
         except:
@@ -150,8 +150,8 @@ class Scraper:
 
             for page in range(1, 4):
                 r = requests.get(
-                    "https://www.tutorialbar.com/all-courses/page/" + str(page)
-                )
+                    "https://www.tutorialbar.com/all-courses/page/" + str(page), 
+                timeout=60)
                 soup = bs(r.content, "html5lib")
                 small_all = soup.find_all(
                     "h3", class_="mb15 mt0 font110 mobfont100 fontnormal lineheight20"
@@ -163,7 +163,7 @@ class Scraper:
                 self.tb_progress = index
                 title = item.a.string
                 url = item.a["href"]
-                r = requests.get(url)
+                r = requests.get(url, timeout=60)
                 soup = bs(r.content, "html5lib")
                 link = soup.find("a", class_="btn_offer_block re_track_btn")["href"]
                 if "www.udemy.com" in link:
@@ -218,7 +218,7 @@ class Scraper:
 
     def cv(self):
         try:
-            r = requests.get("https://coursevania.com/courses/")
+            r = requests.get("https://coursevania.com/courses/", timeout=60)
             soup = bs(r.content, "html5lib")
             nonce = json.loads(
                 [
@@ -231,8 +231,8 @@ class Scraper:
             r = requests.get(
                 "https://coursevania.com/wp-admin/admin-ajax.php?&template=courses/grid&args={%22posts_per_page%22:%2230%22}&action=stm_lms_load_content&nonce="
                 + nonce
-                + "&sort=date_high"
-            ).json()
+                + "&sort=date_high", 
+            timeout=60).json()
 
             soup = bs(r["content"], "html5lib")
             small_all = soup.find_all(
@@ -242,7 +242,7 @@ class Scraper:
             for index, item in enumerate(small_all):
                 self.cv_progress = index
                 title = item.h5.string
-                r = requests.get(item.a["href"])
+                r = requests.get(item.a["href"], timeout=60)
                 soup = bs(r.content, "html5lib")
                 self.cv_links.append(
                     title
@@ -261,8 +261,8 @@ class Scraper:
             for page in range(1, 6):
                 r = requests.get(
                     "https://idownloadcoupon.com/product-category/100off/page/"
-                    + str(page)
-                )
+                    + str(page), 
+                timeout=60)
                 soup = bs(r.content, "html5lib")
                 small_all = soup.find_all(
                     "a", attrs={"class": "button product_type_external"}
@@ -288,8 +288,8 @@ class Scraper:
     def en(self):
         try:
             r = requests.get(
-                "https://jobs.e-next.in/public/assets/data/udemy.json"
-            ).json()
+                "https://jobs.e-next.in/public/assets/data/udemy.json", 
+            timeout=60).json()
             big_all = r
             self.en_length = len(big_all)
             for index, item in enumerate(big_all):
@@ -329,8 +329,8 @@ class Udemy:
         except FileNotFoundError:
             self.settings = dict(
                 requests.get(
-                    f"https://raw.githubusercontent.com/techtanic/Discounted-Udemy-Course-Enroller/master/duce-{self.interface}-settings.json"
-                ).json()
+                    f"https://raw.githubusercontent.com/techtanic/Discounted-Udemy-Course-Enroller/master/duce-{self.interface}-settings.json", 
+                timeout=60).json()
             )
 
         self.title_exclude = "\n".join(self.settings["title_exclude"])
@@ -357,7 +357,7 @@ class Udemy:
 
     def get_course_id(self, url: str):
         # url="https://www.udemy.com/course/microsoft-az-102-practice-test?couponCode=04718D908CFD4CBE19BB"
-        r = requests.get(url)
+        r = requests.get(url, timeout=60)
         soup = bs(r.content, "html5lib")
         try:
             course_id = (
@@ -469,8 +469,8 @@ class Udemy:
     def check_for_update(self) -> tuple[str, str]:
         r_version = (
             requests.get(
-                "https://api.github.com/repos/techtanic/Discounted-Udemy-Course-Enroller/releases/latest"
-            )
+                "https://api.github.com/repos/techtanic/Discounted-Udemy-Course-Enroller/releases/latest", 
+            timeout=60)
             .json()["tag_name"]
             .removeprefix("v")
         )
@@ -556,7 +556,7 @@ class Udemy:
         r = requests.get(
             "https://www.udemy.com/api-2.0/contexts/me/?me=True&Config=True",
             headers=headers,
-        ).json()
+        timeout=60).json()
         if r["me"]["is_authenticated"] == False:
             raise LoginException("Login Failed")
 
