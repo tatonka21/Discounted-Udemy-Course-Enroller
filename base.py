@@ -14,6 +14,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 
 from colors import *
+from security import safe_requests
 
 VERSION = "v1.8"
 
@@ -96,7 +97,7 @@ class Scraper:
             }
 
             for page in range(1, 4):
-                r = requests.get(
+                r = safe_requests.get(
                     "https://www.discudemy.com/all/" + str(page), headers=head
                 )
                 soup = bs(r.content, "html5lib")
@@ -107,7 +108,7 @@ class Scraper:
                 self.du_progress = index
                 title = item.string
                 url = item["href"].split("/")[-1]
-                r = requests.get("https://www.discudemy.com/go/" + url, headers=head)
+                r = safe_requests.get("https://www.discudemy.com/go/" + url, headers=head)
                 soup = bs(r.content, "html5lib")
                 self.du_links.append(
                     title + "|:|" + soup.find("a", id="couponLink").string
@@ -123,7 +124,7 @@ class Scraper:
             big_all = []
 
             for page in range(1, 3):
-                r = requests.get(
+                r = safe_requests.get(
                     "https://www.udemyfreebies.com/free-udemy-courses/" + str(page)
                 )
                 soup = bs(r.content, "html5lib")
@@ -134,7 +135,7 @@ class Scraper:
             for index, item in enumerate(big_all):
                 self.uf_progress = index
                 title = item.img["alt"]
-                link = requests.get(
+                link = safe_requests.get(
                     "https://www.udemyfreebies.com/out/" + item["href"].split("/")[4]
                 ).url
                 self.uf_links.append(title + "|:|" + link)
@@ -149,7 +150,7 @@ class Scraper:
             big_all = []
 
             for page in range(1, 4):
-                r = requests.get(
+                r = safe_requests.get(
                     "https://www.tutorialbar.com/all-courses/page/" + str(page)
                 )
                 soup = bs(r.content, "html5lib")
@@ -163,7 +164,7 @@ class Scraper:
                 self.tb_progress = index
                 title = item.a.string
                 url = item.a["href"]
-                r = requests.get(url)
+                r = safe_requests.get(url)
                 soup = bs(r.content, "html5lib")
                 link = soup.find("a", class_="btn_offer_block re_track_btn")["href"]
                 if "www.udemy.com" in link:
@@ -185,13 +186,13 @@ class Scraper:
                 "Connection": "Keep-Alive",
             }
             try:
-                r = requests.get(
+                r = safe_requests.get(
                     "https://www.real.discount/api-web/all-courses/?store=Udemy&page=1&per_page=40&orderby=date&free=1&editorschoices=0",
                     headers=headers,
                     timeout=5,
                 ).json()
             except requests.exceptions.ConnectTimeout:
-                r = requests.get(
+                r = safe_requests.get(
                     "https://www.real.discount/api-web/all-courses/?store=Udemy&page=1&per_page=40&orderby=date&free=1&editorschoices=0",
                     headers=headers,
                     timeout=5,
@@ -228,7 +229,7 @@ class Scraper:
                 ][0].strip("_mlv =	norsecat;\n")
             )["load_content"]
 
-            r = requests.get(
+            r = safe_requests.get(
                 "https://coursevania.com/wp-admin/admin-ajax.php?&template=courses/grid&args={%22posts_per_page%22:%2230%22}&action=stm_lms_load_content&nonce="
                 + nonce
                 + "&sort=date_high"
@@ -242,7 +243,7 @@ class Scraper:
             for index, item in enumerate(small_all):
                 self.cv_progress = index
                 title = item.h5.string
-                r = requests.get(item.a["href"])
+                r = safe_requests.get(item.a["href"])
                 soup = bs(r.content, "html5lib")
                 self.cv_links.append(
                     title
@@ -259,7 +260,7 @@ class Scraper:
         try:
             big_all = []
             for page in range(1, 6):
-                r = requests.get(
+                r = safe_requests.get(
                     "https://idownloadcoupon.com/product-category/100off/page/"
                     + str(page)
                 )
@@ -328,7 +329,7 @@ class Udemy:
                 self.settings = json.load(f)
         except FileNotFoundError:
             self.settings = dict(
-                requests.get(
+                safe_requests.get(
                     f"https://raw.githubusercontent.com/techtanic/Discounted-Udemy-Course-Enroller/master/duce-{self.interface}-settings.json"
                 ).json()
             )
@@ -357,7 +358,7 @@ class Udemy:
 
     def get_course_id(self, url: str):
         # url="https://www.udemy.com/course/microsoft-az-102-practice-test?couponCode=04718D908CFD4CBE19BB"
-        r = requests.get(url)
+        r = safe_requests.get(url)
         soup = bs(r.content, "html5lib")
         try:
             course_id = (
@@ -553,7 +554,7 @@ class Udemy:
             "dnt": "1",
         }
 
-        r = requests.get(
+        r = safe_requests.get(
             "https://www.udemy.com/api-2.0/contexts/me/?me=True&Config=True",
             headers=headers,
         ).json()
